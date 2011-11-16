@@ -11,7 +11,7 @@ At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing
 * Places ( http://www.schema.org/Places )
 * Events ( http://www.schema.org/Events )
 
-#Future additions
+#Proposed additions
 
 * Blog ( http://www.schema.org/Blog )
 * Article ( http://www.schema.org/Article )
