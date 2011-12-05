@@ -10,12 +10,12 @@ At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing
 
 * Places ( http://www.schema.org/Places )
 * Events ( http://www.schema.org/Events )
+* Article ( http://www.schema.org/Article )
+* User Comments ( http://www.schema.org/UserComments )
+* Person ( http://www.schema.org/Person )
 
 #Proposed additions
 
-* Blog ( http://www.schema.org/Blog )
-* Article ( http://www.schema.org/Article )
-* Person ( http://www.schema.org/Person )
 * Product ( http://www.schema.org/Product)
 
 See more at http://www.schema.org/
