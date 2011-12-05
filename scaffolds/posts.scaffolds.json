@@ -1,0 +1,1 @@
+{"Name":{"type":"textbox"},"Image":{"type":"upload"},"Description":{"type":"textbox"},"Publish Date":{"type":"date"},"Body":{"type":"textbox"},"Author":{"type":"selectbox_link"}}

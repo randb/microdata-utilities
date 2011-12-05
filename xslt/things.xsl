@@ -5,10 +5,298 @@
 	extension-element-prefixes="date">
 	
 	
+
+<!--
+	Article - http://schema.org/Article
+-->	
+	<xsl:template match="entry" mode="article">
+
+		<!-- 
+			Pass in a param here for more specific types of articles (e.g. Blog Posting). See: http://www.schema.org/Article
+		-->
+			<xsl:param name="type" select="'Article'" />
+		
+		<!-- 
+			Pass in a path the full item , e.g. 'blog/read' if displaying on the listing page
+			
+			Note: The entry @id is used by default as the url-parameter.
+		-->
+			<xsl:param name="path" select="false()" />
+			
+			<article itemscope="itemscope" itemtype="http://schema.org/{$type}">
+					
+				<!-- Some Meta Stuff -->
+				<xsl:if test="creation-date">
+					<meta itemprop="creationDate" content="{creationDate}" />
+				</xsl:if>
+				
+				<xsl:if test="body">
+					<meta itemprop="wordCount" content="{body/@word-count}" />
+				</xsl:if>
+				
+				<xsl:choose>
+					<xsl:when test="$path">
+						<h1>
+							<a href="{$path}{@id}" itemprop="url">
+								<span itemprop="headline">
+									<xsl:value-of select="name" />	
+								</span>
+							</a>	
+						</h1>
+						
+						<!-- Image -->
+						<xsl:if test="image">
+							<a href="{$path}{@id}" itemprop="url">
+								<img itemprop="thumbnail" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+							</a>
+						</xsl:if>	
+					</xsl:when>
+					<xsl:otherwise>
+						<h1 itemprop="headline">
+							<xsl:value-of select="name" />	
+						</h1>
+						
+						<!-- Image -->
+						<xsl:if test="image">
+							<img itemprop="image" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+						</xsl:if>	
+					</xsl:otherwise>
+				</xsl:choose>
+				
+				<!-- Author -->
+				<xsl:if test="author">
+					<span itemprop="author">
+						<xsl:value-of select="author/item" />
+					</span>
+				</xsl:if>
+	
+				<!-- Publish Date -->
+				<xsl:if test="publish-date">
+					<dl class="publish-date">
+						<dt>Publish Date</dt>
+						<dd itemprop="datePublished">
+							<xsl:value-of select="publish-date" />
+						</dd>
+					</dl>
+				</xsl:if>
+	
+				<!-- Display either short Description or Article body -->
+				<xsl:choose>
+					<xsl:when test="description !='' and $path">
+						<div itemprop="description">
+							<xsl:apply-templates select="description/*" mode="output" />
+						</div>
+					</xsl:when>
+					<xsl:when test="body and $path">
+						<div itemprop="description">
+							<xsl:apply-templates select="substring(body/*, 0, 200)" mode="output" />
+						</div>
+					</xsl:when>
+					<xsl:when test="body and not($path)">
+						<div itemprop="articleBody">
+							<xsl:apply-templates select="body/*" mode="output" />
+						</div>
+					</xsl:when>
+				</xsl:choose>
+	
+			</article>
+
+	</xsl:template>
+	
+
+<!--
+	User Comments - http://schema.org/UserComments
+-->	
+	<xsl:template match="entry" mode="user-comments">
+		<article itemscope="itemscope" itemtype="http://schema.org/UserComments">
+			
+			<!-- Some Meta Stuff -->
+			<meta itemprop="creationDate" content="{related-post/item}" />
+
+			<h3>
+				<xsl:text>At: </xsl:text>
+				<span itemprop="commentTime">
+					<xsl:value-of select="date" />
+				</span>
+				<xsl:text> </xsl:text>
+				<span itemprop="creator">
+					<xsl:value-of select="commenter/item" />
+				</span>
+				<xsl:text> wrote: </xsl:text>
+			</h3>
+			
+			<div itemprop="commentText">
+				<xsl:apply-templates select="comment/*" mode="output" />
+			</div>
+			
+		</article>
+	</xsl:template>
+
+
+<!--
+	Organisation - http://schema.org/Organisation
+-->	
+	<xsl:template match="entry" mode="organization">
+
+		<!-- 
+			Pass in a param here for more specific types of organisations. See: http://www.schema.org/Organization 
+		-->
+			<xsl:param name="type" select="'Organization'" />
+			
+		
+		<!-- 
+			Pass in a path the full profile , e.g. 'organisations/profile' if displaying on the listing page
+			
+			Note: The entry @id is used by default as the url-parameter.
+		-->
+			<xsl:param name="path" select="false()" />
+			
+		
+			<article itemscope="itemscope" itemtype="http://schema.org/{$type}">
+
+				<!--  Class the generic Thing utility -->
+				<xsl:apply-templates select="." mode="thing">
+					<xsl:with-param name="path" select="$path" />
+				</xsl:apply-templates>
+				
+				<!-- Description -->
+				<xsl:if test="description">
+					<div itemprop="description">
+						<xsl:apply-templates select="description" mode="output" />
+					</div>
+				</xsl:if>
+				
+				<!-- Address -->
+				<xsl:apply-templates select="." mode="postal-address" />
+				
+				<!-- Gender -->
+				<xsl:if test="gender/item/@handle != ''">
+					<dl class="gender">
+						<dt>Gender</dt>
+						<dd itemprop="gender">
+							<xsl:value-of select="gender/item/@handle" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Date of Birth -->
+				<xsl:if test="date-of-birth != ''">
+					<dl class="date-of-birth">
+						<dt>Date of Birth</dt>
+						<dd itemprop="birthDate">
+							<xsl:value-of select="date-of-birth" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Telephone -->
+				<xsl:if test="telephone != ''">
+					<dl class="telephone">
+						<dt>Phone Number</dt>
+						<dd itemprop="telephone">
+							<xsl:value-of select="telephone" />
+						</dd>
+					</dl>
+				</xsl:if>		
+				
+				<!-- Fax -->
+				<xsl:if test="fax != ''">
+					<dl class="fax">
+						<dt>Fax</dt>
+						<dd itemprop="faxNumber">
+							<xsl:value-of select="fax" />
+						</dd>
+					</dl>
+				</xsl:if>	
+			
+			</article>
+	</xsl:template>
+	
+	
+<!--
+	Person - http://schema.org/Person 
+-->	
+	<xsl:template match="entry" mode="person">
+
+		<!-- 
+			Pass in a param here for more specific types of persons. See: http://www.schema.org/CreativeWork 
+		-->
+			<xsl:param name="type" select="'Person'" />
+			
+		
+		<!-- 
+			Pass in a path the full profile , e.g. 'artists/profile' if displaying on the listing page
+			
+			Note: The entry @id is used by default as the url-parameter.
+		-->
+			<xsl:param name="path" select="false()" />
+			
+		
+			<article itemscope="itemscope" itemtype="http://schema.org/{$type}">
+
+				<!--  Class the generic Thing utility -->
+				<xsl:apply-templates select="." mode="thing">
+					<xsl:with-param name="path" select="$path" />
+				</xsl:apply-templates>
+				
+				<!-- Description -->
+				<xsl:if test="description">
+					<div itemprop="description">
+						<xsl:apply-templates select="description" mode="output" />
+					</div>
+				</xsl:if>
+				
+				<!-- Address -->
+				<xsl:apply-templates select="." mode="postal-address" />
+				
+				<!-- Gender -->
+				<xsl:if test="gender/item/@handle != ''">
+					<dl class="gender">
+						<dt>Gender</dt>
+						<dd itemprop="gender">
+							<xsl:value-of select="gender/item/@handle" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Date of Birth -->
+				<xsl:if test="date-of-birth != ''">
+					<dl class="date-of-birth">
+						<dt>Date of Birth</dt>
+						<dd itemprop="birthDate">
+							<xsl:value-of select="date-of-birth" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Telephone -->
+				<xsl:if test="telephone != ''">
+					<dl class="telephone">
+						<dt>Phone Number</dt>
+						<dd itemprop="telephone">
+							<xsl:value-of select="telephone" />
+						</dd>
+					</dl>
+				</xsl:if>		
+				
+				<!-- Fax -->
+				<xsl:if test="fax != ''">
+					<dl class="fax">
+						<dt>Fax</dt>
+						<dd itemprop="faxNumber">
+							<xsl:value-of select="fax" />
+						</dd>
+					</dl>
+				</xsl:if>	
+			
+			</article>
+	</xsl:template>
+
+
 <!--
 	Place - http://www.schema.org/Place
 -->	
-	<xsl:template match='entry' mode='place'>
+	<xsl:template match="entry" mode="place">
 			
 		<!-- 
 			Pass in a param here for more specific types of places. See: http://www.schema.org/Place 
@@ -94,7 +382,7 @@
 <!--
 	Event - http://www.schema.org/Event
 -->
-	<xsl:template match='entry' mode='event'>
+	<xsl:template match="entry" mode='event'>
 	
 	<!-- 
 		Pass in a param here for more specific types of events. See: http://www.schema.org/Event
@@ -125,30 +413,13 @@
 			<meta itemprop="startDate" content="{concat(start-date, 'T', start-date/@time, ':00')}" />
 			<meta itemprop="endDate" content="{concat(end-date, 'T', end-date/@time, ':00')}" />
 			
-			<!-- Image -->
-			<xsl:if test="image">
-				<img itemprop="image" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
-			</xsl:if>	
 			
 			<header>
-				
-				<xsl:choose>
-					<xsl:when test="$path">
-						<h1>
-							<a href="{$path}{@id}" itemprop="url">
-								<span itemprop="name">
-									<xsl:value-of select="name" />	
-								</span>
-							</a>	
-						</h1>
-					</xsl:when>
-					<xsl:otherwise>
-						<h1 itemprop="name">
-							<xsl:value-of select="name" />	
-						</h1>
-					</xsl:otherwise>
-				</xsl:choose>
-				
+			
+				<!--  Class the generic Thing utility -->
+				<xsl:apply-templates select="." mode="thing">
+					<xsl:with-param name="path" select="$path" />
+				</xsl:apply-templates>
 		
 				<!-- Date/Times -->
 				<dl>	
@@ -172,10 +443,10 @@
 			
 			<!-- Description -->
 			<xsl:if test="description">
-				<span itemprop="description">
+				<div itemprop="description">
 					<xsl:apply-templates select="description" mode="output" />
-				</span>
-			</xsl:if>	
+				</div>
+			</xsl:if>
 			
 			<!-- Call the Place utility -->
 			<xsl:apply-templates select="." mode="place">	
@@ -195,6 +466,42 @@
 			
 		</article>
 		
+	</xsl:template>
+
+
+<!-- 
+	Thing -  http://www.schema.org/Thing
+-->
+	<xsl:template match="entry" mode="thing">
+		<xsl:param name="path" selected="false" />
+		<xsl:choose>
+			<xsl:when test="$path">
+				<h1>
+					<a href="{$path}{@id}" itemprop="url">
+						<span itemprop="name">
+							<xsl:value-of select="name" />	
+						</span>
+					</a>	
+				</h1>
+				
+				<!-- Image -->
+				<xsl:if test="image">
+					<a href="{$path}{@id}" itemprop="url">
+						<img itemprop="image" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+					</a>
+				</xsl:if>	
+			</xsl:when>
+			<xsl:otherwise>
+				<h1 itemprop="name">
+					<xsl:value-of select="name" />	
+				</h1>
+				
+				<!-- Image -->
+				<xsl:if test="image">
+					<img itemprop="image" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+				</xsl:if>	
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	
@@ -238,7 +545,7 @@
 <!--
 	Postal Address
 -->
-	<xsl:template match='entry' mode='postal-address'>
+	<xsl:template match="entry" mode='postal-address'>
 		
 		<dl itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
 		
