@@ -21,6 +21,7 @@
 	<dict>
 		<key>ExpandedURLs</key>
 		<array>
+			<string>file://localhost/Users/nickryall/Sites/microdata-utilities/scaffolds</string>
 			<string>file://localhost/Users/nickryall/Sites/microdata-utilities/xslt</string>
 		</array>
 	</dict>
