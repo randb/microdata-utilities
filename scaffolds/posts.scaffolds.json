@@ -1,1 +1,1 @@
-{"Name":{"type":"textbox"},"Image":{"type":"upload"},"Description":{"type":"textbox"},"Publish Date":{"type":"date"},"Body":{"type":"textbox"},"Author":{"type":"selectbox_link"}}
+{"Headline":{"type":"textbox","location":[{"value":"main"}],"text_size":[{"value":"single"}],"text_formatter":[{"value":"none"}],"text_length":"0","column_length":"75","text_handle":"yes","text_cdata":"no","required":"yes","show_column":"yes"},"Image":{"type":"upload"},"Description":{"type":"textbox"},"Publish Date":{"type":"date"},"Body":{"type":"textbox"},"Author":{"type":"selectbox_link"}}

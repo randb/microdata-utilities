@@ -1,0 +1,1 @@
+{"Title":{"type":"textbox"},"Employment Type":{"type":"select"},"Description":{"type":"textbox"},"Map Location":{"type":"maplocation","location":[{"value":"sidebar"}],"default_location":"London, England","default_zoom":"3","show_column":"yes"},"Date":{"type":"date"},"Salary":{"type":"textbox"},"Skills":{"type":"taglist"},"Benefits":{"type":"taglist"}}

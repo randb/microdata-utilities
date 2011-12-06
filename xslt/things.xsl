@@ -27,7 +27,7 @@
 					
 				<!-- Some Meta Stuff -->
 				<xsl:if test="creation-date">
-					<meta itemprop="creationDate" content="{creationDate}" />
+					<meta itemprop="creationDate" content="{creation-date}" />
 				</xsl:if>
 				
 				<xsl:if test="body">
@@ -39,7 +39,7 @@
 						<h1>
 							<a href="{$path}{@id}" itemprop="url">
 								<span itemprop="headline">
-									<xsl:value-of select="name" />	
+									<xsl:value-of select="headline" />	
 								</span>
 							</a>	
 						</h1>
@@ -53,7 +53,7 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<h1 itemprop="headline">
-							<xsl:value-of select="name" />	
+							<xsl:value-of select="headline" />	
 						</h1>
 						
 						<!-- Image -->
@@ -89,7 +89,7 @@
 					</xsl:when>
 					<xsl:when test="body and $path">
 						<div itemprop="description">
-							<xsl:apply-templates select="substring(body/*, 0, 200)" mode="output" />
+							<xsl:apply-templates select="substring(body/*, 1, 200)" mode="output" />
 						</div>
 					</xsl:when>
 					<xsl:when test="body and not($path)">
@@ -130,6 +130,132 @@
 			</div>
 			
 		</article>
+	</xsl:template>
+	
+	
+
+<!--
+	Job Posting - http://schema.org/JobPosting
+-->	
+	<xsl:template match="entry" mode="job-posting">
+		
+		<!-- 
+			Pass in a path the full item , e.g. 'jobs/read' if displaying on the listing page
+			
+			Note: The entry @id is used by default as the url-parameter.
+		-->
+			<xsl:param name="path" select="false()" />
+		
+		
+			<article itemscope="itemscope" itemtype="http://schema.org/JobPosting">
+				<xsl:choose>
+					<xsl:when test="$path">
+						<h1>
+							<a href="{$path}{@id}" itemprop="url">
+								<span itemprop="title">
+									<xsl:value-of select="title" />	
+								</span>
+							</a>	
+						</h1>
+						
+						<!-- Image -->
+						<xsl:if test="image">
+							<a href="{$path}{@id}" itemprop="url">
+								<img itemprop="thumbnail" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+							</a>
+						</xsl:if>	
+					</xsl:when>
+					<xsl:otherwise>
+						<h1 itemprop="title">
+							<xsl:value-of select="title" />	
+						</h1>
+						
+						<!-- Image -->
+						<xsl:if test="image">
+							<img itemprop="image" src="{$workspace}{image/@path}/{image/filename}" alt="{name}" />
+						</xsl:if>	
+					</xsl:otherwise>
+				</xsl:choose>
+				
+				<!-- Job Location -->
+				<xsl:apply-templates select="." mode="place">
+					<xsl:with-param name="itemprop" select="'jobLocation'" />
+					<xsl:with-param name="display-mode" select="'job'" />
+				</xsl:apply-templates>
+				
+				<!-- Date Posted -->
+				<xsl:if test="date">
+					<dl class="date">
+						<dt>Date Posted</dt>
+						<dd itemprop="datePosted">
+							<xsl:value-of select="date" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Employment Type -->
+				<xsl:if test="employment-type">
+					<dl class="employment-type">
+						<dt>Employment Type</dt>
+						<dd itemprop="employmentType">
+							<xsl:value-of select="employment-type" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Salary -->
+				<xsl:if test="salary">
+					<dl class="salary">
+						<dt>Salary</dt>
+						<dd itemprop="baseSalary">
+							<xsl:value-of select="salary" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Benefits -->
+				<xsl:if test="benefits">
+					<dl itemprop="benefits" class="benefits">
+						<dt>Benefits</dt>
+						<xsl:for-each select="benefits/item">
+							<dd>
+								<xsl:value-of select="." />
+							</dd>
+						</xsl:for-each>
+					</dl>
+				</xsl:if>
+				
+				<!-- Incentives -->
+				<xsl:if test="incentives">
+					<dl class="incentives">
+						<dt>Incentives</dt>
+						<dd itemprop="incentives">
+							<xsl:value-of select="incentives" />
+						</dd>
+					</dl>
+				</xsl:if>
+				
+				<!-- Skills -->
+				<xsl:if test="skills">
+					<dl itemprop="skills" class="skills">
+						<dt>Skills</dt>
+						<xsl:for-each select="skills/item">
+							<dd>
+								<xsl:value-of select="." />
+							</dd>
+						</xsl:for-each>
+					</dl>
+				</xsl:if>
+				
+				<!-- Description -->
+				<xsl:if test="description">
+					<div itemprop="description">
+						<xsl:apply-templates select="description" mode="output" />
+					</div>
+				</xsl:if>
+				
+				
+			</article>
 	</xsl:template>
 
 
@@ -223,7 +349,12 @@
 		-->
 			<xsl:param name="type" select="'Person'" />
 			
-		
+		<!-- 
+			Pass in an itemprop attribute if embedded in another utility.
+		-->
+			<xsl:param name="itemprop" select="false()" />
+			
+			
 		<!-- 
 			Pass in a path the full profile , e.g. 'artists/profile' if displaying on the listing page
 			
@@ -233,6 +364,12 @@
 			
 		
 			<article itemscope="itemscope" itemtype="http://schema.org/{$type}">
+			
+				<xsl:if test="$itemprop">
+					<xsl:attribute name="itemprop">
+						<xsl:value-of select="$itemprop" />
+					</xsl:attribute>
+				</xsl:if>
 
 				<!--  Class the generic Thing utility -->
 				<xsl:apply-templates select="." mode="thing">
@@ -304,6 +441,11 @@
 			<xsl:param name="type" select="'Place'" />
 			
 		<!-- 
+			Pass in an itemprop attribute if embedded in another utility.
+		-->
+			<xsl:param name="itemprop" select="false()" />
+			
+		<!-- 
 			Display Mode - Modify behaviour depending  on what is calling this utility. 
 		-->
 			<xsl:param name="display-mode" select="'full'" />	
@@ -319,6 +461,12 @@
 			<xsl:param name="map-display" select="'map'" />
 			
 			<article itemscope="itemscope" itemtype="http://schema.org/{$type}">
+				
+				<xsl:if test="$itemprop">
+					<xsl:attribute name="itemprop">
+						<xsl:value-of select="$itemprop" />
+					</xsl:attribute>
+				</xsl:if>
 
 				<xsl:if test="$display-mode = 'full'">
 					<h1 itemprop="name">
