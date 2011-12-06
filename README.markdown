@@ -4,7 +4,7 @@ A set of XSLT utilities for marking up common data types using a vocabulary that
 
 The utilities are bundled with Scaffolds (https://github.com/brendo/scaffolds) files for quick and easy creation of related Symphony sections. 
 
-At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing).
+At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing). This will must likely need to be moved in the separate section based files. 
 
 #Currently supported
 
@@ -13,6 +13,7 @@ At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing
 * Article ( http://www.schema.org/Article )
 * User Comments ( http://www.schema.org/UserComments )
 * Person ( http://www.schema.org/Person )
+* Job Posting ( http://www.schema.org/JobPosting )
 
 #Proposed additions
 
