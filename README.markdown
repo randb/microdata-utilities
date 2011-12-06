@@ -4,7 +4,7 @@ A set of XSLT utilities for marking up common data types using a vocabulary that
 
 The utilities are bundled with Scaffolds (https://github.com/brendo/scaffolds) files for quick and easy creation of related Symphony sections. 
 
-At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing). This will must likely need to be moved in the separate section based files. 
+At present there is a single XSLT file - things.xsl (http://www.schema.org/Thing). This will must likely need to be broken up into separate section based files. 
 
 #Currently supported
 

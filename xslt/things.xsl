@@ -271,6 +271,12 @@
 			
 		
 		<!-- 
+			Pass in an itemprop attribute if embedded in another utility.
+		-->
+			<xsl:param name="itemprop" select="false()" />
+			
+		
+		<!-- 
 			Pass in a path the full profile , e.g. 'organisations/profile' if displaying on the listing page
 			
 			Note: The entry @id is used by default as the url-parameter.
